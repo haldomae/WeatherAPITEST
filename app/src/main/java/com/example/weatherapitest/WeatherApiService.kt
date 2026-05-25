@@ -12,6 +12,6 @@ interface WeatherApiService {
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("current_weather") currentWeather: Boolean = true
-    ): String
+    ): WeatherResponse // StringからWeatherResponseに変更(Gsonが自動的に変換してくれる)
 
 }
