@@ -18,8 +18,8 @@ sealed class WeatherUiState{
     object Loading: WeatherUiState() // 読み込み中
 
     // data class -> データを持つ状態に使う
-    data class Success(val weather: WeatherResponse)
-    data class Error(val message: String)
+    data class Success(val weather: WeatherResponse): WeatherUiState()
+    data class Error(val message: String): WeatherUiState()
 }
 
 class WeatherViewModel: ViewModel() {

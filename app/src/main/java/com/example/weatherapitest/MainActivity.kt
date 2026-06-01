@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,12 +26,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.weatherapitest.ui.theme.WeatherAPITESTTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -39,7 +42,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WeatherAPITESTTheme {
-                Step2Screen()
+                Step3Screen()
             }
         }
     }
@@ -173,6 +176,42 @@ fun Step2Screen(){
 
     }
 }
+
+@Composable
+fun Step3Screen(
+    viewModel: WeatherViewModel = viewModel()
+){
+    // viewModel.uiState -> 作成したおいたViewModelが公開しているStateFlow<WeatherUiState>
+    // collectAsState() -> StateFlowをComposeが監視でき、StateFlowの値が変わる度にComposableが再度実行される
+    // by -> .valueを省略するために必要
+    val uiState by viewModel.uiState.collectAsState()
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "天気を取得する Ver3.0",
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                // ViewModelに用意されている関数を実行するだけ
+                // 何を取ってくるか、どう処理するかはViewModelに任せる
+                // UIは「ボタンが押された」だけを伝える
+                viewModel.fetchWeather()
+            }
+        ) {
+            Text(text = "天気を取得する")
+        }
+
+
+    }
+
+}
+
 // 天気情報を表示する
 @Composable
 fun WeatherCard(response: WeatherResponse){
