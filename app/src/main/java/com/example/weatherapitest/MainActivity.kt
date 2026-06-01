@@ -207,6 +207,28 @@ fun Step3Screen(
             Text(text = "天気を取得する")
         }
 
+        // val state = uiState と書くことで各分岐内でstateを型安全に使える
+        when (val state = uiState) {
+            is WeatherUiState.Idle ->
+                Text(text = "ボタンを押して天気を取得")
+            is WeatherUiState.Loading ->
+                CircularProgressIndicator()
+            is WeatherUiState.Success ->
+                WeatherCard(state.weather)
+            is WeatherUiState.Error -> {
+                Text(
+                    text = "エラー:${state.message}",
+                    color = MaterialTheme.colorScheme.error
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(onClick = {
+                    viewModel.fetchWeather()
+                }) {
+                    Text(text = "もう一度試す")
+                }
+            }
+        }
+
 
     }
 
